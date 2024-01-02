@@ -5,7 +5,7 @@
 
 import { CodegenConfig } from "@graphql-codegen/cli";
 
-const GRAPHQL_API = process.env.GRAPHQL_API;
+const GRAPHQL_API = process.env.VITE_GRAPHQL_API;
 
 if (!GRAPHQL_API) {
   console.error("Missing Schema URL: ", GRAPHQL_API);

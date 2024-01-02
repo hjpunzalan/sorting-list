@@ -19,7 +19,7 @@ client:
 
 .PHONY: client-generate
 client-generate:
-	cd client && GRAPHQL_API=http://$(LOCAL_DEV_HOST):$(LOCAL_DEV_SERVER_PORT)/graphql npm run generate
+	cd client && VITE_GRAPHQL_API=http://$(LOCAL_DEV_HOST):$(LOCAL_DEV_SERVER_PORT)/graphql npm run generate
 
 .PHONY: client-watch
 client-watch:
@@ -28,7 +28,7 @@ client-watch:
 
 .PHONY: server
 server: 
-	cd server && npm run dev
+	cd server && CLIENT_ORIGIN=http://$(LOCAL_DEV_HOST):$(LOCAL_DEV_CLIENT_PORT) npm run dev
 
 .PHONY: init
 init:

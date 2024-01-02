@@ -1,8 +1,18 @@
+import { GET_POSTS_TITLE } from "@/constants/graphql";
+import { useQuery } from "@apollo/client";
 import { Container, Typography } from "@mui/material";
 import { useState } from "react";
 
 function App() {
   const [count, setCount] = useState(0);
+  const { loading, data } = useQuery(
+    GET_POSTS_TITLE,
+    // variables are also typed!
+    { variables: { page: 1 } }
+  );
+
+  console.log(loading, data);
+
   return (
     <Container component="main">
       <Typography variant="h1">Vite + React</Typography>

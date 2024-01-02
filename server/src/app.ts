@@ -4,7 +4,7 @@ import cors from "cors";
 import express from "express";
 import mongoSanitize from "express-mongo-sanitize";
 import helmet from "helmet";
-import { SANDBOX_ORIGIN } from "./constants";
+import { CLIENT_ORIGIN, SANDBOX_ORIGIN } from "./constants";
 import schema from "./schema";
 
 export const app = express();
@@ -26,7 +26,7 @@ apolloServer.start().then(() => {
   // HTTP endpoints.
   app.use(
     "/graphql",
-    cors({ origin: [SANDBOX_ORIGIN] }),
+    cors({ origin: [SANDBOX_ORIGIN, CLIENT_ORIGIN] }),
     expressMiddleware(apolloServer)
   );
 });

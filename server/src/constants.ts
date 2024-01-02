@@ -19,7 +19,14 @@ if (!process.env.NODE_ENV) {
 
 export const DATABASE = process.env.DATABASE || "mongodb://127.0.0.1:3002/StrataTown";
 if (!process.env.DATABASE) {
-  console.error("DATABASE not defined in config, defaults to development");
+  console.error(
+    "DATABASE not defined in config, defaults to mongodb://127.0.0.1:3002/StrataTown"
+  );
+}
+
+export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:3000";
+if (!process.env.CLIENT_ORIGIN) {
+  console.error("CLIENT_ORIGIN not defined in config, defaults to http://localhost:3000");
 }
 
 export const SANDBOX_ORIGIN = "https://studio.apollographql.com";
