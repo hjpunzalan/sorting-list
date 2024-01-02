@@ -17,7 +17,7 @@ app.use(helmet());
 app.use(express.json({ limit: "10kb" })); // package will parse 10kb into meaningful data
 
 // Data sanitization against NoSQL query injection
-//Look at the req and filter out all '$' and '.' that sends queries to db illegaly
+// Look at the req and filter out all '$' and '.' that sends queries to db illegaly
 app.use(mongoSanitize());
 
 // Apollo server.
