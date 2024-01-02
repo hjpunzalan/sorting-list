@@ -1,5 +1,8 @@
 import { PostsTC } from "../models/Posts";
 
+// Constants.
+const MAX_PER_PAGE = 1000;
+
 export const PostsQuery = {
   postsById: PostsTC.getResolver("findById"),
   postsByIds: PostsTC.getResolver("findByIds"),
@@ -7,5 +10,10 @@ export const PostsQuery = {
   postsMany: PostsTC.getResolver("findMany"),
   postsCount: PostsTC.getResolver("count"),
   postsConnection: PostsTC.getResolver("connection"),
-  postsPagination: PostsTC.getResolver("pagination")
+  postsPagination: PostsTC.getResolver("pagination").wrapResolve(next => rp => {
+    // Limit results per page
+    if (rp.args.perPage > MAX_PER_PAGE) rp.args.perPage = MAX_PER_PAGE;
+
+    return next(rp);
+  })
 };

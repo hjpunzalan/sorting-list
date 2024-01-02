@@ -6,12 +6,28 @@ DOCKER_CONTAINER=$(PACKAGE)-db
 # Paths
 SERVER = $(CURDIR)/server
 
-LOCAL_DEV_DB_HOST?=localhost
+LOCAL_DEV_HOST?=localhost
+LOCAL_DEV_CLIENT_PORT=3000
+LOCAL_DEV_SERVER_PORT?=3001
+LOCAL_DEV_DB_HOST?=$(LOCAL_DEV_HOST)
 LOCAL_DEV_DB_PORT?=3002
 DB_CONNECTION_STRING="mongodb+srv://$(LOCAL_DEV_DB_HOST):$(LOCAL_DEV_DB_PORT)"
 
-.PHONY: serve
-serve: 
+.PHONY: client
+client:
+	  make client-generate && cd client && PORT=$(LOCAL_DEV_CLIENT_PORT) npm run dev
+
+.PHONY: client-generate
+client-generate:
+	cd client && GRAPHQL_API=http://$(LOCAL_DEV_HOST):$(LOCAL_DEV_SERVER_PORT)/graphql npm run generate
+
+.PHONY: client-watch
+client-watch:
+	GRAPHQL_API=$(LOCAL_DEV_HOST):$(LOCAL_DEV_SERVER_PORT)/graphql npm run watch
+
+
+.PHONY: server
+server: 
 	cd server && npm run dev
 
 .PHONY: init
