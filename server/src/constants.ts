@@ -21,3 +21,5 @@ export const DATABASE = process.env.DATABASE || "mongodb://127.0.0.1:3002/Strata
 if (!process.env.DATABASE) {
   console.error("DATABASE not defined in config, defaults to development");
 }
+
+export const SANDBOX_ORIGIN = "https://studio.apollographql.com";
