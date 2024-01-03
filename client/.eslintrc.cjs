@@ -46,7 +46,7 @@ module.exports = {
     "jsx-a11y/alt-text": "off",
     "import/no-unresolved": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "react/display-name": "off"
-    // "@typescript-eslint/no-unused-vars": "off"
+    "react/display-name": "off",
+    "@typescript-eslint/no-unused-vars": "warn"
   }
 };

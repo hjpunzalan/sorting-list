@@ -4,42 +4,60 @@ import { Colours } from "@/constants/colours";
 import { GET_POSTS_TITLE } from "@/constants/graphql";
 import { LOCAL_STORAGE_KEY } from "@/constants/keys";
 import reorderPostsFromObjectMap from "@/lib/reorderPostsFromObjectMap";
-import { useSuspenseQuery } from "@apollo/client";
-import {
-  CircularProgress,
-  Container,
-  ContainerProps,
-  Typography,
-  styled
-} from "@mui/material";
-import { Suspense, useMemo, useState } from "react";
+import { useQuery } from "@apollo/client";
+import { Button, CircularProgress, Container, ContainerProps, Typography, styled } from "@mui/material";
+import { LexoRank } from "lexorank";
+import { useState } from "react";
 
 function App() {
-  const { data } = useSuspenseQuery(
-    GET_POSTS_TITLE,
-    // variables are also typed!
-    { variables: { page: 1 } }
-  );
-
-  // Get initial posts.
-  const items = data.postsPagination?.items;
-  const initialItems = useMemo(() => {
-    let orderedPosts = Array.from(items || []);
-
-    // Get order from local storage.
-    const savedListOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedListOrder && orderedPosts.length > 0) {
-      orderedPosts = reorderPostsFromObjectMap(orderedPosts, JSON.parse(savedListOrder));
-    }
-    return orderedPosts;
-  }, [items]);
-
   // State.
-  const [posts, setPosts] = useState(initialItems);
+  const [posts, setPosts] = useState<Posts[]>([]);
+  const [sortedPosts, setSortedPosts] = useState<Posts[]>([]);
+  const [hasSorted, setHasSorted] = useState(false);
+  const [page, setPage] = useState(1);
+
+  // Query posts.
+  const { loading, data } = useQuery(GET_POSTS_TITLE, {
+    variables: { page },
+    onCompleted: data => {
+      if (data.postsPagination?.items) {
+        const { items } = data.postsPagination;
+        let orderedItems = Array.from(items);
+
+        // Sort order if sorting is saved in storage.
+        const savedListOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (savedListOrder && items.length > 0) {
+          orderedItems = reorderPostsFromObjectMap(orderedItems, JSON.parse(savedListOrder));
+
+          // Indicate initial sorting has been applied.
+          setHasSorted(true);
+        }
+
+        // Update state.
+        setPosts(current => current.concat(items));
+        setSortedPosts(current =>
+          current.concat(orderedItems).sort((a, b) => LexoRank.parse(a.order).compareTo(LexoRank.parse(b.order)))
+        );
+      }
+    }
+  });
 
   // Handlers.
-  function handleChangePosts(values: Posts[]) {
-    setPosts(values);
+  function handleChangeSortedPosts(next: Posts[]) {
+    if (!hasSorted) setHasSorted(true);
+    next = next.sort((a, b) => LexoRank.parse(a.order).compareTo(LexoRank.parse(b.order)));
+    setSortedPosts(next);
+  }
+
+  function handleNextPage() {
+    if (data?.postsPagination?.pageInfo.hasNextPage) setPage(page + 1);
+  }
+
+  function handleResetPostsOrder() {
+    if (!confirm("This will reset the sorted order and all progress will be lost. Are you sure?")) return;
+    setSortedPosts(posts);
+    setHasSorted(false);
+    localStorage.clear();
   }
 
   return (
@@ -53,9 +71,16 @@ function App() {
         <IntroText>Sort the list of posts title by drag and drop!</IntroText>
       </Section>
       <Section>
-        <Suspense fallback={<CircularProgress />}>
-          <PostList posts={posts} onChange={handleChangePosts} />
-        </Suspense>
+        <PostList posts={sortedPosts} onChange={handleChangeSortedPosts} />
+        {loading && <CircularProgress />}
+        <Button
+          sx={{ width: "fit-content" }}
+          variant="contained"
+          onClick={handleResetPostsOrder}
+          disabled={!hasSorted || loading}
+        >
+          Reset Changes
+        </Button>
       </Section>
     </SectionsContainer>
   );
@@ -79,8 +104,10 @@ const IntroText = styled("p")(({ theme }) => ({
   fontWeight: "bold"
 }));
 
-const Section = styled((props: ContainerProps) => (
-  <Container component="section" {...props} />
-))();
+const Section = styled((props: ContainerProps) => <Container component="section" {...props} />)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(2)
+}));
 
 export default App;

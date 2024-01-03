@@ -26,11 +26,20 @@ export const mainTheme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
+          ...theme.typography.body1,
+          backgroundColor: Colours.DarkPurple,
+          color: Colours.BrightYellow,
+          fontWeight: "bold",
           "&.Mui-disabled": {
             color: "grey"
+          },
+
+          "&:hover": {
+            backgroundColor: Colours.BrightYellow,
+            color: Colours.DarkPurple
           }
-        }
+        })
       }
     }
   }

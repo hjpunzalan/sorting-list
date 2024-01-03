@@ -3,8 +3,7 @@ import { PostItem } from "@/components/PostItem";
 import { DROPPABLE_ID, LOCAL_STORAGE_KEY } from "@/constants/keys";
 import { generateRank } from "@/lib/generateRank";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
-import { LexoRank } from "lexorank";
-import React, { useMemo } from "react";
+import React from "react";
 import { FixedSizeList, ListChildComponentProps, areEqual } from "react-window";
 
 const PostItemMemo = React.memo((props: ListChildComponentProps<Posts[]>) => {
@@ -23,13 +22,6 @@ interface PostListProps {
 }
 
 export const PostList: React.FC<PostListProps> = ({ posts, onChange }) => {
-  // Get ordered posts.
-  const orderedItems = useMemo(
-    () =>
-      posts?.sort((a, b) => LexoRank.parse(a.order).compareTo(LexoRank.parse(b.order))),
-    [posts]
-  );
-
   // Handlers.
   function handleDragEnd(result: DropResult) {
     if (!result.destination) {
@@ -53,11 +45,7 @@ export const PostList: React.FC<PostListProps> = ({ posts, onChange }) => {
       }
     }
     // Update list order.
-    const newLexorank = generateRank(
-      posts,
-      result.source.index,
-      result.destination.index
-    );
+    const newLexorank = generateRank(posts, result.source.index, result.destination.index);
     newListOrder[sourceItem._id] = newLexorank.toString();
 
     // Update state.
@@ -78,21 +66,17 @@ export const PostList: React.FC<PostListProps> = ({ posts, onChange }) => {
         droppableId={DROPPABLE_ID}
         mode="virtual"
         renderClone={(provided, snapshot, rubric) => (
-          <PostItem
-            provided={provided}
-            isDragging={snapshot.isDragging}
-            item={orderedItems[rubric.source.index]}
-          />
+          <PostItem provided={provided} isDragging={snapshot.isDragging} item={posts[rubric.source.index]} />
         )}
       >
         {provided => (
           <FixedSizeList
             height={400}
-            itemCount={orderedItems.length}
+            itemCount={posts.length}
             itemSize={100}
             width={300}
             outerRef={provided.innerRef}
-            itemData={orderedItems}
+            itemData={posts}
           >
             {PostItemMemo}
           </FixedSizeList>
