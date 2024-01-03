@@ -4,6 +4,8 @@ This is a simple website that handles sorting a list of Posts title.
 
 It utilises the LexoRank, a lexical (alphanumerical) ranking system for sorting by drag and drop.
 
+It also renders 500 post title items using react-window to reduce render loads.
+
 
 https://github.com/hjpunzalan/sorting-list/assets/47600145/a3754390-8420-40b6-892b-ac20d98aed7c
 
