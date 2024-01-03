@@ -54,3 +54,6 @@ Start client in development mode:
 - Vite v5
 - Graphql v18
 - LexoRank v1
+- Material UI v5
+- React-Window
+- @hello-pangea/dnd
