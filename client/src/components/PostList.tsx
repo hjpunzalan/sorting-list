@@ -1,3 +1,4 @@
+import { IListOrder } from "@/App";
 import { Posts } from "@/__generated__/graphql";
 import { PostItem } from "@/components/PostItem";
 import { DROPPABLE_ID, LOCAL_STORAGE_KEY } from "@/constants/keys";
@@ -18,10 +19,10 @@ const PostItemMemo = React.memo((props: ListChildComponentProps<Posts[]>) => {
 
 interface PostListProps {
   posts: Posts[];
-  onChange: (posts: Posts[]) => void;
+  onListOrderChange: (next: IListOrder) => void;
 }
 
-export const PostList: React.FC<PostListProps> = ({ posts, onChange }) => {
+export const PostList: React.FC<PostListProps> = ({ posts, onListOrderChange }) => {
   // Handlers.
   function handleDragEnd(result: DropResult) {
     if (!result.destination) {
@@ -49,12 +50,7 @@ export const PostList: React.FC<PostListProps> = ({ posts, onChange }) => {
     newListOrder[sourceItem._id] = newLexorank.toString();
 
     // Update state.
-    const update = Array.from(posts);
-    update[result.source.index] = {
-      ...update[result.source.index],
-      order: newLexorank.toString()
-    };
-    onChange(update);
+    onListOrderChange(newListOrder);
 
     // Save in storage.
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newListOrder));

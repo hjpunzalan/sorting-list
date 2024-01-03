@@ -7,13 +7,25 @@ import reorderPostsFromObjectMap from "@/lib/reorderPostsFromObjectMap";
 import { useQuery } from "@apollo/client";
 import { Button, CircularProgress, Container, ContainerProps, Typography, styled } from "@mui/material";
 import { LexoRank } from "lexorank";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+export type IListOrder = { [key: string]: string } | null;
 
 function App() {
+  // Fetch initial list order from storage.
+  const initialListOrder = useMemo(() => {
+    let listOrder = null;
+    const savedListOrderJSON = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedListOrderJSON) {
+      const savedListOrder = JSON.parse(savedListOrderJSON);
+      if (typeof savedListOrder === "object") listOrder = savedListOrder;
+    }
+    return listOrder;
+  }, []);
+
   // State.
   const [posts, setPosts] = useState<Posts[]>([]);
-  const [sortedPosts, setSortedPosts] = useState<Posts[]>([]);
-  const [hasSorted, setHasSorted] = useState(false);
+  const [listOrder, setListOrder] = useState<IListOrder>(initialListOrder);
 
   // Query posts.
   const { loading } = useQuery(GET_POSTS_TITLE, {
@@ -21,37 +33,28 @@ function App() {
     onCompleted: data => {
       if (data.postsPagination?.items) {
         const items = data.postsPagination.items;
-        let orderedItems = Array.from(items);
-
-        // Sort order if sorting is saved in storage.
-        const savedListOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (savedListOrder && items.length > 0) {
-          orderedItems = reorderPostsFromObjectMap(orderedItems, JSON.parse(savedListOrder));
-
-          // Indicate initial sorting has been applied.
-          setHasSorted(true);
-        }
-
         // Update state.
         setPosts(current => current.concat(items));
-        setSortedPosts(current =>
-          current.concat(orderedItems).sort((a, b) => LexoRank.parse(a.order).compareTo(LexoRank.parse(b.order)))
-        );
       }
     }
   });
 
+  const sortedPosts = useMemo(() => {
+    if (!listOrder || posts.length === 0) return posts;
+
+    return reorderPostsFromObjectMap(posts, listOrder).sort((a, b) =>
+      LexoRank.parse(a.order).compareTo(LexoRank.parse(b.order))
+    );
+  }, [listOrder, posts]);
+
   // Handlers.
-  function handleChangeSortedPosts(next: Posts[]) {
-    if (!hasSorted) setHasSorted(true);
-    next = next.sort((a, b) => LexoRank.parse(a.order).compareTo(LexoRank.parse(b.order)));
-    setSortedPosts(next);
+  function handleChangeListOrder(next: IListOrder) {
+    setListOrder(next);
   }
 
   function handleResetPostsOrder() {
     if (!confirm("This will reset the sorted order and all progress will be lost. Are you sure?")) return;
-    setSortedPosts(posts);
-    setHasSorted(false);
+    setListOrder(null);
     localStorage.clear();
   }
 
@@ -66,13 +69,13 @@ function App() {
         <IntroText>Sort the list of posts title by drag and drop!</IntroText>
       </Section>
       <Section>
-        <PostList posts={sortedPosts} onChange={handleChangeSortedPosts} />
+        <PostList posts={sortedPosts} onListOrderChange={handleChangeListOrder} />
         {loading && <CircularProgress />}
         <Button
           sx={{ width: "fit-content", mt: 2, ml: "auto" }}
           variant="contained"
           onClick={handleResetPostsOrder}
-          disabled={!hasSorted || loading}
+          disabled={!listOrder || loading}
         >
           Reset Changes
         </Button>
