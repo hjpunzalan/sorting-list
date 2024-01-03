@@ -10,7 +10,7 @@ https://github.com/hjpunzalan/sorting-list/assets/47600145/a3754390-8420-40b6-89
 ## Table of contents
 * [Explanation](#explanation)
 * [Technologies](#technologies)
-* [Challenges](#challenges)
+* [Development](#development)
 
 ## Explanation
 
