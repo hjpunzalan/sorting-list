@@ -11,7 +11,16 @@ export default defineConfig({
     eslint(),
     Unfonts({
       google: {
-        families: [encodeURI("PT Mono"), encodeURI("Bebas Neue")]
+        families: [
+          {
+            name: "PT Mono",
+            defer: false // Browser issue with windows and mobile
+          },
+          {
+            name: "Bebas Neue",
+            defer: false // Browser issue with windows and mobile
+          }
+        ]
       }
     })
   ],

@@ -7,6 +7,7 @@
     "build": "npx tsc",
     "start": "NODE_ENV=production node dist/index.js",
     "start:prod": "NODE_ENV=production node dist/index.js",
+    "start:prod:windows": "set NODE_ENV=production&& node dist/index.js",
     "dev": "nodemon --legacy-watch src/index.ts",
     "seed": "npm run build && node dist/seed.js",
     "seed:prod": "npm run build && NODE_ENV=production node dist/seed.js",

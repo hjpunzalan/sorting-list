@@ -54,6 +54,10 @@ db-seed:
 server-prod:
 	cd server && npm run build && npm run start:prod
 
+.PHONY: server-prod-windows
+server-prod-windows:
+	cd server && npm run build && npm run start:prod:windows
+
 .PHONY: client-build
 client-build:
 	  cd client && PORT=$(LOCAL_DEV_SERVER_PORT) npm run build
