@@ -59,7 +59,7 @@ function App() {
     <SectionsContainer>
       <Header>
         <Section>
-          <Typography variant="h1">Strata Town</Typography>
+          <Typography variant="h1">Sorting List</Typography>
         </Section>
       </Header>
       <Section>
