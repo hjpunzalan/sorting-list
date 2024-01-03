@@ -1,4 +1,4 @@
-# [Sorting List](https://sortinglistapp.jonathanpunzalan.com/)
+# [Sorting List](https://sortinglist.jonathanpunzalan.com/)
 
 This is a simple website that handles sorting a list of Posts title.
 
