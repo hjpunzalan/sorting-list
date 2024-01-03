@@ -21,7 +21,7 @@ A lexical ranking system solves this issue by having an abundant of space alloca
 ## Development
 - Node v20 is required.
 - Docker and Makefile is also being used.
-- 
+
 ### Initial Setup
 
 Run the following when setting up the project for the first time:
