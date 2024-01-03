@@ -4,7 +4,8 @@ import cors from "cors";
 import express from "express";
 import mongoSanitize from "express-mongo-sanitize";
 import helmet from "helmet";
-import { CLIENT_ORIGIN, SANDBOX_ORIGIN } from "./constants";
+import path from "path";
+import { CLIENT_ORIGIN, NODE_ENV, SANDBOX_ORIGIN } from "./constants";
 import schema from "./schema";
 
 export const app = express();
@@ -24,9 +25,15 @@ app.use(mongoSanitize());
 const apolloServer = new ApolloServer({ schema });
 apolloServer.start().then(() => {
   // HTTP endpoints.
-  app.use(
-    "/graphql",
-    cors({ origin: [SANDBOX_ORIGIN, CLIENT_ORIGIN] }),
-    expressMiddleware(apolloServer)
-  );
+  app.use("/graphql", cors({ origin: [SANDBOX_ORIGIN, CLIENT_ORIGIN] }), expressMiddleware(apolloServer));
+
+  // Serve static assets in production
+  if (NODE_ENV === "production") {
+    // set static folder
+    app.use(express.static(path.join(__dirname, "..", "..", "client/dist")));
+
+    app.get("*", (_, res) => {
+      res.sendFile(path.resolve(__dirname, "..", "..", "client", "dist", "index.html"));
+    });
+  }
 });

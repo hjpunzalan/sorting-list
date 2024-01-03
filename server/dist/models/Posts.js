@@ -5,11 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsTC = exports.Posts = void 0;
 const graphql_compose_mongoose_1 = require("graphql-compose-mongoose");
-const lexorank_1 = require("lexorank");
 const mongoose_1 = __importDefault(require("mongoose"));
 const postsSchema = new mongoose_1.default.Schema({
     title: { type: String, required: true },
-    order: { type: String, default: lexorank_1.LexoRank.max().toString() }
+    order: { type: String, required: true }
 }, { timestamps: true });
 exports.Posts = mongoose_1.default.model("Posts", postsSchema);
 exports.PostsTC = (0, graphql_compose_mongoose_1.composeWithMongoose)(exports.Posts);

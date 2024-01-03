@@ -6,8 +6,10 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/index.js",
+    "start:prod": "NODE_ENV=production node dist/index.js",
     "dev": "nodemon --legacy-watch src/index.ts",
     "seed": "npm run build && node dist/seed.js",
+    "seed:prod": "npm run build && NODE_ENV=production node dist/seed.js",
     "eslint": "eslint .",
     "format": "npm run eslint && prettier --write ."
   },

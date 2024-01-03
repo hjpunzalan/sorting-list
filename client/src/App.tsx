@@ -36,6 +36,9 @@ function App() {
         // Update state.
         setPosts(current => current.concat(items));
       }
+    },
+    onError: err => {
+      console.error(err.message);
     }
   });
 
@@ -70,7 +73,7 @@ function App() {
       </Section>
       <Section>
         <PostList posts={sortedPosts} onListOrderChange={handleChangeListOrder} />
-        {loading && <CircularProgress />}
+        {loading && <CircularProgress sx={{ alignSelf: "center" }} />}
         <Button
           sx={{ width: "fit-content", mt: 2, ml: "auto" }}
           variant="contained"

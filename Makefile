@@ -7,10 +7,10 @@ DOCKER_CONTAINER=$(PACKAGE)-db
 SERVER = $(CURDIR)/server
 
 LOCAL_DEV_HOST?=localhost
-LOCAL_DEV_CLIENT_PORT=3000
-LOCAL_DEV_SERVER_PORT?=3001
+LOCAL_DEV_CLIENT_PORT=9001
+LOCAL_DEV_SERVER_PORT?=9000
 LOCAL_DEV_DB_HOST?=$(LOCAL_DEV_HOST)
-LOCAL_DEV_DB_PORT?=3002
+LOCAL_DEV_DB_PORT?=9002
 DB_CONNECTION_STRING="mongodb+srv://$(LOCAL_DEV_DB_HOST):$(LOCAL_DEV_DB_PORT)"
 
 .PHONY: client
@@ -49,3 +49,11 @@ db-drop:
 .PHONY: db-seed
 db-seed:
 	cd server && CLIENT_ORIGIN=http://$(LOCAL_DEV_HOST):$(LOCAL_DEV_CLIENT_PORT) npm run seed
+
+.PHONY: server-prod
+server-prod:
+	cd server && npm run build && npm run start:prod
+
+.PHONY: client-build
+client-build:
+	  cd client && PORT=$(LOCAL_DEV_SERVER_PORT) npm run build

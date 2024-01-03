@@ -10,6 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 const helmet_1 = __importDefault(require("helmet"));
+const path_1 = __importDefault(require("path"));
 const constants_1 = require("./constants");
 const schema_1 = __importDefault(require("./schema"));
 exports.app = (0, express_1.default)();
@@ -26,4 +27,12 @@ const apolloServer = new server_1.ApolloServer({ schema: schema_1.default });
 apolloServer.start().then(() => {
     // HTTP endpoints.
     exports.app.use("/graphql", (0, cors_1.default)({ origin: [constants_1.SANDBOX_ORIGIN, constants_1.CLIENT_ORIGIN] }), (0, express4_1.expressMiddleware)(apolloServer));
+    // Serve static assets in production
+    if (constants_1.NODE_ENV === "production") {
+        // set static folder
+        exports.app.use(express_1.default.static(path_1.default.join(__dirname, "..", "..", "client/dist")));
+        exports.app.get("*", (_, res) => {
+            res.sendFile(path_1.default.resolve(__dirname, "..", "..", "client", "dist", "index.html"));
+        });
+    }
 });
