@@ -49,6 +49,7 @@ Start client in development mode:
 ## Technologies
 - Node.js v20
 - MongoDB v6
+- Express v4
 - Mongoose v8
 - React v18
 - Vite v5
