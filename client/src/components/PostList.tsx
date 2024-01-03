@@ -1,48 +1,11 @@
 import { Posts } from "@/__generated__/graphql";
+import { PostItem } from "@/components/PostItem";
+import { DROPPABLE_ID, LOCAL_STORAGE_KEY } from "@/constants/keys";
 import { generateRank } from "@/lib/generateRank";
-import reorderPostsFromObjectMap from "@/lib/reorderPostsFromObjectMap";
-import {
-  DragDropContext,
-  Draggable,
-  DraggableProvided,
-  DropResult,
-  Droppable
-} from "@hello-pangea/dnd";
-import { ListItem, ListItemText } from "@mui/material";
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { LexoRank } from "lexorank";
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { FixedSizeList, ListChildComponentProps, areEqual } from "react-window";
-
-// Constants.
-const LOCAL_STORAGE_KEY = "strata-town-post-list-order";
-const DROPPABLE_ID = "posts-title-droppable";
-
-function PostItem(props: {
-  item: Posts;
-  style?: React.CSSProperties;
-  provided: DraggableProvided;
-  isDragging?: boolean;
-}) {
-  const { item, style, provided } = props;
-
-  const combined = {
-    ...style,
-    ...provided.draggableProps.style
-  };
-
-  return (
-    <ListItem
-      disablePadding
-      key={item._id}
-      ref={provided.innerRef}
-      {...provided.draggableProps}
-      {...provided.dragHandleProps}
-      style={combined}
-    >
-      <ListItemText primary={item.title} />
-    </ListItem>
-  );
-}
 
 const PostItemMemo = React.memo((props: ListChildComponentProps<Posts[]>) => {
   const { data: items, index, style } = props;
@@ -55,30 +18,16 @@ const PostItemMemo = React.memo((props: ListChildComponentProps<Posts[]>) => {
 }, areEqual);
 
 interface PostListProps {
-  posts: Posts[] | null | undefined;
+  posts: Posts[];
+  onChange: (posts: Posts[]) => void;
 }
 
-export const PostList: React.FC<PostListProps> = ({ posts }) => {
-  // Get initial posts.
-  const initialItems = useMemo(() => {
-    let orderedPosts = Array.from(posts || []);
-
-    // Get order from local storage.
-    const savedListOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedListOrder && posts) {
-      orderedPosts = reorderPostsFromObjectMap(orderedPosts, JSON.parse(savedListOrder));
-    }
-    return orderedPosts;
-  }, [posts]);
-
-  // State.
-  const [items, setItems] = useState(initialItems);
-
+export const PostList: React.FC<PostListProps> = ({ posts, onChange }) => {
   // Get ordered posts.
   const orderedItems = useMemo(
     () =>
-      items.sort((a, b) => LexoRank.parse(a.order).compareTo(LexoRank.parse(b.order))),
-    [items]
+      posts?.sort((a, b) => LexoRank.parse(a.order).compareTo(LexoRank.parse(b.order))),
+    [posts]
   );
 
   // Handlers.
@@ -92,7 +41,7 @@ export const PostList: React.FC<PostListProps> = ({ posts }) => {
       return;
     }
     // Save to local storage.
-    const sourceItem = items[result.source.index];
+    const sourceItem = posts[result.source.index];
     const savedListOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
 
     // Track user list sort by order.
@@ -105,21 +54,19 @@ export const PostList: React.FC<PostListProps> = ({ posts }) => {
     }
     // Update list order.
     const newLexorank = generateRank(
-      items,
+      posts,
       result.source.index,
       result.destination.index
     );
     newListOrder[sourceItem._id] = newLexorank.toString();
 
     // Update state.
-    setItems(current => {
-      const update = Array.from(current);
-      update[result.source.index] = {
-        ...update[result.source.index],
-        order: newLexorank.toString()
-      };
-      return update;
-    });
+    const update = Array.from(posts);
+    update[result.source.index] = {
+      ...update[result.source.index],
+      order: newLexorank.toString()
+    };
+    onChange(update);
 
     // Save in storage.
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newListOrder));
