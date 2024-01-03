@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 
 const postsSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true }
+    title: { type: String, required: true },
+    order: { type: String, required: true }
   },
   { timestamps: true }
 );

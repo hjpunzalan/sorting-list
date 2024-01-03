@@ -1,7 +1,7 @@
 import { PostsTC } from "../models/Posts";
 
 // Constants.
-const MAX_PER_PAGE = 1000;
+const MAX_PER_PAGE = 500;
 
 export const PostsQuery = {
   postsById: PostsTC.getResolver("findById"),

@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { LexoRank } from "lexorank";
 import mongoose from "mongoose";
 import { DATABASE } from "./constants";
 import { Posts } from "./models/Posts";
@@ -16,14 +17,23 @@ mongoose
   })
   .then(() => console.log("DB connection is successful!"));
 
-// Get list of post title using faker
+// Generate seed posts.
+// Use lexorank for ordering.
+let lexorank = LexoRank.min();
 const posts = Array.from(
   {
     length: 1500
   },
-  () => ({
-    title: capitalizeFirstLetter(faker.word.words({ count: { min: 3, max: 10 } }))
-  })
+  () => {
+    // Increment
+    lexorank = lexorank.genNext();
+
+    return {
+      // Get list of post title using faker
+      title: capitalizeFirstLetter(faker.word.words({ count: { min: 3, max: 10 } })),
+      order: lexorank.toString()
+    };
+  }
 );
 
 async function seedDB() {

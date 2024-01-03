@@ -7,6 +7,10 @@ export const GET_POSTS_TITLE = gql(/* GraphQL */ `
       items {
         _id
         title
+        order
+      }
+      pageInfo {
+        hasNextPage
       }
     }
   }

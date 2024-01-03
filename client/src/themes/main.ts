@@ -5,7 +5,8 @@ export const mainTheme = createTheme({
   typography: {
     fontFamily: "PT Mono",
     h1: {
-      fontFamily: "Bebas Neue"
+      fontFamily: "Bebas Neue",
+      color: Colours.PalePink
     }
   },
   palette: {

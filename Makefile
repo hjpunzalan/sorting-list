@@ -32,7 +32,7 @@ server:
 
 .PHONY: init
 init:
-	make db-drop || make db-init || make server-install && make db-seed
+	 make db-init || make server-install && make db-seed
 
 .PHONY: server-install
 server-install:
@@ -44,8 +44,8 @@ db-init:
 
 .PHONY: db-drop
 db-drop:
-	docker rm $(PACKAGE)-db
+	docker stop $(PACKAGE)-db && docker rm $(PACKAGE)-db
 
 .PHONY: db-seed
 db-seed:
-	cd server && npm run seed
+	cd server && CLIENT_ORIGIN=http://$(LOCAL_DEV_HOST):$(LOCAL_DEV_CLIENT_PORT) npm run seed

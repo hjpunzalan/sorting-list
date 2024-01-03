@@ -26,6 +26,7 @@ export type FilterCountPostsInput = {
   /** List of *indexed* fields that can be filtered via operators. */
   _operators?: InputMaybe<FilterCountPostsOperatorsInput>;
   createdAt?: InputMaybe<Scalars['Date']['input']>;
+  order?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['Date']['input']>;
 };
@@ -53,6 +54,7 @@ export type FilterFindManyPostsInput = {
   /** List of *indexed* fields that can be filtered via operators. */
   _operators?: InputMaybe<FilterFindManyPostsOperatorsInput>;
   createdAt?: InputMaybe<Scalars['Date']['input']>;
+  order?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['Date']['input']>;
 };
@@ -80,6 +82,7 @@ export type FilterFindOnePostsInput = {
   /** List of *indexed* fields that can be filtered via operators. */
   _operators?: InputMaybe<FilterFindOnePostsOperatorsInput>;
   createdAt?: InputMaybe<Scalars['Date']['input']>;
+  order?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   updatedAt?: InputMaybe<Scalars['Date']['input']>;
 };
@@ -127,6 +130,7 @@ export type Posts = {
   __typename?: 'Posts';
   _id: Scalars['MongoID']['output'];
   createdAt?: Maybe<Scalars['Date']['output']>;
+  order: Scalars['String']['output'];
   title: Scalars['String']['output'];
   updatedAt?: Maybe<Scalars['Date']['output']>;
 };
@@ -248,7 +252,7 @@ export type QueryQueryVariables = Exact<{
 }>;
 
 
-export type QueryQuery = { __typename?: 'Query', postsPagination?: { __typename?: 'PostsPagination', count?: number | null, items?: Array<{ __typename?: 'Posts', _id: any, title: string }> | null } | null };
+export type QueryQuery = { __typename?: 'Query', postsPagination?: { __typename?: 'PostsPagination', count?: number | null, items?: Array<{ __typename?: 'Posts', _id: any, title: string, order: string }> | null, pageInfo: { __typename?: 'PaginationInfo', hasNextPage?: boolean | null } } | null };
 
 
-export const QueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Query"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postsPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"perPage"},"value":{"kind":"IntValue","value":"500"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}}]}}]} as unknown as DocumentNode<QueryQuery, QueryQueryVariables>;
+export const QueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Query"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"postsPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"perPage"},"value":{"kind":"IntValue","value":"500"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"order"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]}}]} as unknown as DocumentNode<QueryQuery, QueryQueryVariables>;
