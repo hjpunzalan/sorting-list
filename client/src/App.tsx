@@ -14,14 +14,13 @@ function App() {
   const [posts, setPosts] = useState<Posts[]>([]);
   const [sortedPosts, setSortedPosts] = useState<Posts[]>([]);
   const [hasSorted, setHasSorted] = useState(false);
-  const [page, setPage] = useState(1);
 
   // Query posts.
-  const { loading, data } = useQuery(GET_POSTS_TITLE, {
-    variables: { page },
+  const { loading } = useQuery(GET_POSTS_TITLE, {
+    variables: { perPage: 500 },
     onCompleted: data => {
       if (data.postsPagination?.items) {
-        const { items } = data.postsPagination;
+        const items = data.postsPagination.items;
         let orderedItems = Array.from(items);
 
         // Sort order if sorting is saved in storage.
@@ -49,10 +48,6 @@ function App() {
     setSortedPosts(next);
   }
 
-  function handleNextPage() {
-    if (data?.postsPagination?.pageInfo.hasNextPage) setPage(page + 1);
-  }
-
   function handleResetPostsOrder() {
     if (!confirm("This will reset the sorted order and all progress will be lost. Are you sure?")) return;
     setSortedPosts(posts);
@@ -74,7 +69,7 @@ function App() {
         <PostList posts={sortedPosts} onChange={handleChangeSortedPosts} />
         {loading && <CircularProgress />}
         <Button
-          sx={{ width: "fit-content" }}
+          sx={{ width: "fit-content", mt: 2, ml: "auto" }}
           variant="contained"
           onClick={handleResetPostsOrder}
           disabled={!hasSorted || loading}

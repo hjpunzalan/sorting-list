@@ -11,7 +11,7 @@ const PostItemMemo = React.memo((props: ListChildComponentProps<Posts[]>) => {
   const item = items[index];
   return (
     <Draggable draggableId={item._id} index={index} key={item._id}>
-      {provided => <PostItem provided={provided} item={item} style={style} />}
+      {provided => <PostItem index={index} provided={provided} item={item} style={style} />}
     </Draggable>
   );
 }, areEqual);
@@ -66,17 +66,22 @@ export const PostList: React.FC<PostListProps> = ({ posts, onChange }) => {
         droppableId={DROPPABLE_ID}
         mode="virtual"
         renderClone={(provided, snapshot, rubric) => (
-          <PostItem provided={provided} isDragging={snapshot.isDragging} item={posts[rubric.source.index]} />
+          <PostItem
+            index={rubric.source.index}
+            provided={provided}
+            isDragging={snapshot.isDragging}
+            item={posts[rubric.source.index]}
+          />
         )}
       >
         {provided => (
           <FixedSizeList
-            height={400}
+            height={360}
             itemCount={posts.length}
-            itemSize={100}
-            width={300}
+            itemSize={80}
             outerRef={provided.innerRef}
             itemData={posts}
+            width="100%"
           >
             {PostItemMemo}
           </FixedSizeList>
